@@ -1,0 +1,20 @@
+name: Main
+on:
+  push:
+    branches:
+      - some-main-branch # trunk/main normally
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # include build steps here
+      - name: Publish
+        env:
+          # set secrets on GitHub
+          SSHPASS: ${{secrets.SSH_PASS}}
+        shell: pwsh
+        # example using rsync to publish from the dist directory to the remote server ~/httpdocs directory
+        run: ./scripts/sync.ps1 -SSHUser ${{secrets.SSH_USER}} -SSHHost ${{secrets.SSH_HOST}} -SrcPath ${{github.workspace}}/dist/* -DestPath ~/httpdocs
+
